@@ -15,12 +15,11 @@ export interface DatosReserva {
 }
 
 interface Props {
-  nombrePeluqueria: string;
   servicios: Servicio[];
   dias: DiaDisponible[];
   horariosDisponibles: string[];
   estado: EstadoPantalla;
-  linkWhatsapp: string;
+  linkWhatsapp: string | null;
   cargandoHorarios?: boolean;
   enviando?: boolean;
   mensajeError?: string | null;
@@ -64,7 +63,6 @@ function EsqueletoCalendario() {
 }
 
 export function ReservarTurno({
-  nombrePeluqueria,
   servicios,
   dias,
   horariosDisponibles,
@@ -121,9 +119,6 @@ export function ReservarTurno({
   return (
     <section className="relative w-full overflow-hidden rounded-[28px] border border-[#e7e7e7] bg-white text-[#222]">
       <header className="border-b border-[#eeeeee] px-5 py-5 sm:px-7">
-        <p className="mb-1 break-words text-[13px] font-medium uppercase tracking-[0.14em] text-[#E8542A]">
-          {nombrePeluqueria}
-        </p>
         <h1 className="text-2xl font-semibold tracking-[-0.03em]">
           Reservar turno
         </h1>
@@ -163,14 +158,20 @@ export function ReservarTurno({
             <p className="break-words text-base font-medium">
               No hay turnos disponibles esta semana
             </p>
-            <a
-              href={linkWhatsapp}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-lg bg-[#E8542A] px-4 py-3 text-[13px] font-semibold text-white transition hover:bg-[#c94420] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#222]"
-            >
-              Escribinos por WhatsApp
-            </a>
+            {linkWhatsapp ? (
+              <a
+                href={linkWhatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-lg bg-[#E8542A] px-4 py-3 text-[13px] font-semibold text-white transition hover:bg-[#c94420] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#222]"
+              >
+                Escribinos por WhatsApp
+              </a>
+            ) : (
+              <p className="text-[13px] text-[#666]">
+                Volvé a intentar más tarde o contactá a la peluquería.
+              </p>
+            )}
           </div>
         ) : (
           <>

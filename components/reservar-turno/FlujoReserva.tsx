@@ -9,15 +9,13 @@ import { ReservarTurno, type DatosReserva } from "./ReservarTurno";
 
 interface Props {
   peluqueriaSlug: string;
-  nombrePeluqueria: string;
   servicios: Servicio[];
   dias: DiaDisponible[];
-  linkWhatsapp: string;
+  linkWhatsapp: string | null;
 }
 
 export function FlujoReserva({
   peluqueriaSlug,
-  nombrePeluqueria,
   servicios,
   dias,
   linkWhatsapp,
@@ -109,7 +107,6 @@ export function FlujoReserva({
 
   return (
     <ReservarTurno
-      nombrePeluqueria={nombrePeluqueria}
       servicios={servicios}
       dias={dias}
       horariosDisponibles={horarios}
