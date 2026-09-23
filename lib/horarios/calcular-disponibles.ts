@@ -8,6 +8,7 @@ import {
 } from "@/lib/fechas";
 import type { Peluqueria } from "@/lib/peluquerias/obtener-por-slug";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { liberarReservasVencidas } from "@/lib/turnos/liberar-reservas-vencidas";
 
 import {
   ANTICIPACION_MINIMA_MINUTOS,
@@ -49,6 +50,7 @@ export async function calcularHorariosDisponibles({
 }): Promise<ResultadoDisponibilidad | null> {
   if (!UUID.test(servicioId)) return null;
 
+  await liberarReservasVencidas();
   const supabase = createAdminClient();
 
   const { data: servicio, error: errorServicio } = await supabase

@@ -98,7 +98,7 @@ export function FlujoReserva({
         return;
       }
 
-      router.push(`/confirmacion/${cuerpo.turno.id}`);
+      router.push(`/confirmacion/${cuerpo.turno.token}`);
     } catch {
       setMensajeError("No pudimos guardar el turno. Revisá tu conexión.");
       setEnviando(false);

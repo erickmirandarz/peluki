@@ -93,3 +93,17 @@ export function horaAMinutos(hora: string) {
 export function minutosAHora(minutos: number) {
   return `${aTexto(Math.floor(minutos / 60))}:${aTexto(minutos % 60)}`;
 }
+
+export function formatearFechaLarga(instante: Date, zona: string) {
+  return new Intl.DateTimeFormat("es-AR", {
+    timeZone: zona,
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  }).format(instante);
+}
+
+export function formatearHoraCorta(instante: Date, zona: string) {
+  const { hora, minuto } = partesEnZona(instante, zona);
+  return `${aTexto(hora)}:${aTexto(minuto)}`;
+}

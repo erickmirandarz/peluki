@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { formatearPrecio } from "@/lib/dinero";
 import type { DiaDisponible, Servicio } from "@/types";
 
 export type EstadoPantalla = "datos" | "vacio" | "cargando" | "error";
@@ -28,13 +29,6 @@ interface Props {
   onReintentar: () => void;
   onConfirmarTurno: (datos: DatosReserva) => void;
 }
-
-const formatearPrecio = (precio: number) =>
-  new Intl.NumberFormat("es-AR", {
-    style: "currency",
-    currency: "ARS",
-    maximumFractionDigits: 0,
-  }).format(precio);
 
 function EsqueletoHorarios() {
   return (

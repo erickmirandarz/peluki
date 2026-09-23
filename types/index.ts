@@ -33,6 +33,16 @@ export interface DiaDisponible {
   fecha: string;
 }
 
+/** Datos que muestra la pantalla de confirmación. */
+export interface TurnoConfirmado {
+  servicioNombre: string;
+  fecha: string;
+  hora: string;
+  duracionMinutos: number;
+  precio: number;
+  nombrePeluqueria: string;
+}
+
 export interface Turno {
   id: string;
   peluqueriaId: string;

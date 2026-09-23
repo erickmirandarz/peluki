@@ -71,6 +71,7 @@ export async function crearTurno({
         nombre_ingresado: nombre.trim(),
         inicio: horario.inicio.toISOString(),
         fin: horario.fin.toISOString(),
+        estado: "SIN_CONFIRMAR",
         canal,
         token_gestion_hash: hash,
       })
