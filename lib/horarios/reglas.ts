@@ -1,0 +1,3 @@
+export const INTERVALO_MINUTOS = 30;
+export const ANTICIPACION_MINIMA_MINUTOS = 60;
+export const DIAS_HACIA_ADELANTE = 30;
