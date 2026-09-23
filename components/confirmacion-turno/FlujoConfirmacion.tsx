@@ -37,15 +37,17 @@ export function FlujoConfirmacion({
   });
   const [mensajeError, setMensajeError] = useState<string | null>(null);
 
-  const elegirMetodo = async (metodo: MetodoPago) => {
+  const elegirMetodo = (metodo: MetodoPago) => {
     setMensajeError(null);
+    setMetodoPago(metodo);
+  };
 
-    if (metodo === "MERCADO_PAGO") {
-      setMetodoPago(metodo);
+  const confirmarPago = async () => {
+    if (!metodoPago || metodoPago !== "EFECTIVO" || estado === "cargando") {
       return;
     }
 
-    setMetodoPago(metodo);
+    setMensajeError(null);
     setEstado("cargando");
 
     try {
@@ -54,7 +56,7 @@ export function FlujoConfirmacion({
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ metodo }),
+          body: JSON.stringify({ metodo: metodoPago }),
         },
       );
       if (!respuesta.ok) throw new Error(`HTTP ${respuesta.status}`);
@@ -91,13 +93,8 @@ export function FlujoConfirmacion({
           setMetodoPago("MERCADO_PAGO");
         }}
         onIrAReservar={() => router.push("/reservar")}
-        onListo={() => {
-          if (estado === "exito") {
-            router.push("/reservar");
-            return;
-          }
-          if (pagoConfirmado) setEstado("exito");
-        }}
+        onConfirmar={confirmarPago}
+        onListo={() => router.push("/reservar")}
       />
     </div>
   );

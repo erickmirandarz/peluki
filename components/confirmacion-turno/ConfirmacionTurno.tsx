@@ -23,6 +23,7 @@ interface Props {
   onAgregarGoogleCalendar: () => void;
   onReintentarPago: () => void;
   onIrAReservar: () => void;
+  onConfirmar: () => void;
   onListo: () => void;
 }
 
@@ -62,6 +63,7 @@ export function ConfirmacionTurno({
   onAgregarGoogleCalendar,
   onReintentarPago,
   onIrAReservar,
+  onConfirmar,
   onListo,
 }: Props) {
   if (estado === "sin_turno") {
@@ -150,7 +152,7 @@ export function ConfirmacionTurno({
         <TarjetaTurno
           turno={turno}
           cargando={estado === "cargando"}
-          mensajeCarga="Guardando tu medio de pago…"
+          mensajeCarga="Confirmando tu turno…"
         />
       </div>
 
@@ -182,8 +184,8 @@ export function ConfirmacionTurno({
           )}
           <button
             type="button"
-            disabled={!pagoConfirmado}
-            onClick={onListo}
+            disabled={metodoPagoSeleccionado !== "EFECTIVO"}
+            onClick={onConfirmar}
             className="mt-6 w-full rounded-xl bg-[#E8542A] px-5 py-3.5 text-base font-semibold text-white transition-colors hover:bg-[#D94A24] disabled:cursor-not-allowed disabled:bg-[#D9D9D9] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E8542A]"
           >
             Confirmar
