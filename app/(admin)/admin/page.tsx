@@ -1,5 +1,5 @@
-import Link from "next/link";
+import { redirect } from "next/navigation";
 
 export default function AdminPage() {
-  return <Link href="/admin/turnos-hoy">Ver turnos de hoy</Link>;
+  redirect("/admin/dashboard");
 }

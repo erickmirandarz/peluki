@@ -17,13 +17,15 @@ export interface TurnoPorToken {
   inicio: Date;
   fin: Date;
   metodoPago: MetodoPago | null;
+  telefono: string | null;
+  nombreCliente: string;
 }
 
 type Relacion<T> = T | T[] | null;
 
 export async function obtenerTurnoPorToken(
   token: string,
-  opciones?: { omitirLiberacion?: boolean },
+  opciones?: { omitirLiberacion?: boolean; incluirCancelados?: boolean },
 ): Promise<TurnoPorToken | null> {
   if (!token) return null;
 
@@ -40,8 +42,10 @@ export async function obtenerTurnoPorToken(
       estado,
       inicio,
       fin,
+      nombre_ingresado,
       servicios ( nombre, duracion_minutos, precio_centavos ),
       peluquerias ( nombre, zona_horaria ),
+      clientes!cliente_id ( telefono_normalizado, nombre_canonico ),
       pagos ( metodo, estado, created_at )
     `,
     )
@@ -49,10 +53,12 @@ export async function obtenerTurnoPorToken(
     .maybeSingle();
 
   if (error) throw error;
-  if (!data || data.estado === "CANCELADO") return null;
+  if (!data) return null;
+  if (data.estado === "CANCELADO" && !opciones?.incluirCancelados) return null;
 
   const servicio = uno(data.servicios as Relacion<ServicioFila>);
   const peluqueria = uno(data.peluquerias as Relacion<PeluqueriaFila>);
+  const cliente = uno(data.clientes as Relacion<ClienteFila>);
   if (!servicio || !peluqueria) return null;
 
   const inicio = new Date(data.inicio);
@@ -68,6 +74,8 @@ export async function obtenerTurnoPorToken(
     inicio,
     fin,
     metodoPago: (pagoElegido?.metodo as MetodoPago | undefined) ?? null,
+    telefono: cliente?.telefono_normalizado ?? null,
+    nombreCliente: data.nombre_ingresado || cliente?.nombre_canonico || "",
     confirmado: {
       servicioNombre: servicio.nombre,
       fecha: formatearFechaLarga(inicio, peluqueria.zona_horaria),
@@ -83,6 +91,11 @@ interface ServicioFila {
   nombre: string;
   duracion_minutos: number;
   precio_centavos: number;
+}
+
+interface ClienteFila {
+  telefono_normalizado: string;
+  nombre_canonico: string;
 }
 
 interface PeluqueriaFila {

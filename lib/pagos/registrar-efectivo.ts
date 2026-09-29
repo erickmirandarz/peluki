@@ -2,6 +2,10 @@ import "server-only";
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { obtenerTurnoPorToken } from "@/lib/turnos/obtener-por-token";
+import {
+  armarAvisoTurnoConfirmado,
+  notificarTurnoConfirmado,
+} from "@/lib/whatsapp";
 
 export async function registrarPagoEfectivo(token: string) {
   const turno = await obtenerTurnoPorToken(token, { omitirLiberacion: true });
@@ -29,9 +33,23 @@ export async function registrarPagoEfectivo(token: string) {
 
   if (errorTurno) throw errorTurno;
 
-  return {
+  const confirmado = {
     ...turno,
-    estado: "CONFIRMADO",
-    metodoPago: "EFECTIVO",
+    estado: "CONFIRMADO" as const,
+    metodoPago: "EFECTIVO" as const,
   };
+
+  const aviso = armarAvisoTurnoConfirmado(token, confirmado);
+  if (!aviso) {
+    console.warn("Make: el turno no tiene teléfono, no se mandó el aviso.");
+    return confirmado;
+  }
+
+  try {
+    await notificarTurnoConfirmado(aviso);
+  } catch (error) {
+    console.error("No se pudo avisar a Make para el WhatsApp:", error);
+  }
+
+  return confirmado;
 }

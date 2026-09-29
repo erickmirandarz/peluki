@@ -1,4 +1,5 @@
 import { obtenerTurnoPorToken } from "@/lib/turnos/obtener-por-token";
+import { sePuedeCancelar } from "@/lib/turnos/reglas";
 
 export async function GET(
   _request: Request,
@@ -7,7 +8,7 @@ export async function GET(
   const { token } = await params;
 
   try {
-    const turno = await obtenerTurnoPorToken(token);
+    const turno = await obtenerTurnoPorToken(token, { incluirCancelados: true });
     if (!turno) {
       return Response.json({ error: "No encontramos ese turno." }, { status: 404 });
     }
@@ -15,6 +16,7 @@ export async function GET(
       turno: turno.confirmado,
       estado: turno.estado,
       metodoPago: turno.metodoPago,
+      puedeCancelar: sePuedeCancelar(turno.estado, turno.inicio),
     });
   } catch (error) {
     console.error(error);

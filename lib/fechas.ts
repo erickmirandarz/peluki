@@ -2,6 +2,43 @@
 // siempre en la zona horaria de la peluquería.
 
 const NOMBRES_DIA = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+const NOMBRES_DIA_LARGO = [
+  "Domingo",
+  "Lunes",
+  "Martes",
+  "Miércoles",
+  "Jueves",
+  "Viernes",
+  "Sábado",
+];
+const MESES = [
+  "enero",
+  "febrero",
+  "marzo",
+  "abril",
+  "mayo",
+  "junio",
+  "julio",
+  "agosto",
+  "septiembre",
+  "octubre",
+  "noviembre",
+  "diciembre",
+];
+const MESES_CORTOS = [
+  "ene",
+  "feb",
+  "mar",
+  "abr",
+  "may",
+  "jun",
+  "jul",
+  "ago",
+  "sep",
+  "oct",
+  "nov",
+  "dic",
+];
 
 function partesEnZona(instante: Date, zona: string) {
   const partes = new Intl.DateTimeFormat("en-US", {
@@ -44,8 +81,30 @@ export function esHoraValida(hora: string) {
 }
 
 export function fechaLocalHoy(zona: string, ahora = new Date()) {
-  const { anio, mes, dia } = partesEnZona(ahora, zona);
+  return fechaLocalDe(ahora, zona);
+}
+
+export function fechaLocalDe(instante: Date, zona: string) {
+  const { anio, mes, dia } = partesEnZona(instante, zona);
   return `${anio}-${aTexto(mes)}-${aTexto(dia)}`;
+}
+
+/** Lunes de la semana de `fecha` (semana arranca el lunes). */
+export function inicioSemanaLunes(fecha: string) {
+  const dia = diaSemana(fecha);
+  return sumarDias(fecha, dia === 0 ? -6 : 1 - dia);
+}
+
+/** Primer día del mes de `fecha`. */
+export function inicioMes(fecha: string) {
+  return `${fecha.slice(0, 7)}-01`;
+}
+
+/** Primer día del mes siguiente a `fecha`. */
+export function inicioMesSiguiente(fecha: string) {
+  const [anio, mes] = fecha.split("-").map(Number);
+  const utc = new Date(Date.UTC(anio, mes, 1));
+  return `${utc.getUTCFullYear()}-${aTexto(utc.getUTCMonth() + 1)}-${aTexto(utc.getUTCDate())}`;
 }
 
 export function sumarDias(fecha: string, dias: number) {
@@ -62,6 +121,42 @@ export function diaSemana(fecha: string) {
 
 export function nombreDia(fecha: string) {
   return NOMBRES_DIA[diaSemana(fecha)];
+}
+
+export function nombreDiaLargo(fecha: string) {
+  return NOMBRES_DIA_LARGO[diaSemana(fecha)];
+}
+
+/** "miércoles 18 de junio" */
+export function formatearFechaTitulo(fecha: string) {
+  const [anio, mes, dia] = fecha.split("-").map(Number);
+  const texto = new Intl.DateTimeFormat("es-AR", {
+    timeZone: "UTC",
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  }).format(new Date(Date.UTC(anio, mes - 1, dia)));
+  return texto.charAt(0).toUpperCase() + texto.slice(1);
+}
+
+/** "16 jun" */
+export function formatearDiaMes(fecha: string) {
+  const [, mes, dia] = fecha.split("-").map(Number);
+  return `${dia} ${MESES_CORTOS[mes - 1]}`;
+}
+
+/** "16 al 22 de junio de 2025" */
+export function formatearRangoSemana(desde: string, hasta: string) {
+  const [anioDesde, mesDesde, diaDesde] = desde.split("-").map(Number);
+  const [anioHasta, mesHasta, diaHasta] = hasta.split("-").map(Number);
+
+  if (anioDesde === anioHasta && mesDesde === mesHasta) {
+    return `${diaDesde} al ${diaHasta} de ${MESES[mesDesde - 1]} de ${anioDesde}`;
+  }
+  if (anioDesde === anioHasta) {
+    return `${diaDesde} de ${MESES[mesDesde - 1]} al ${diaHasta} de ${MESES[mesHasta - 1]} de ${anioDesde}`;
+  }
+  return `${diaDesde} de ${MESES[mesDesde - 1]} de ${anioDesde} al ${diaHasta} de ${MESES[mesHasta - 1]} de ${anioHasta}`;
 }
 
 /** Convierte una fecha y hora locales de la zona indicada al instante UTC correspondiente. */

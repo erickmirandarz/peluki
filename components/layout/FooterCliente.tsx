@@ -4,12 +4,21 @@ interface Props {
   nombrePeluqueria: string;
   direccion: string | null;
   whatsapp: string | null;
+  ancho?: "contenido" | "ancho";
 }
 
-export function FooterCliente({ nombrePeluqueria, direccion, whatsapp }: Props) {
+export function FooterCliente({
+  nombrePeluqueria,
+  direccion,
+  whatsapp,
+  ancho = "contenido",
+}: Props) {
   return (
     <footer className="border-t border-[#eeeeee] bg-white">
-      <Contenedor className="flex flex-col gap-2 py-6 text-[13px] text-[#666] sm:flex-row sm:items-center sm:justify-between">
+      <Contenedor
+        ancho={ancho}
+        className="flex flex-col gap-2 py-6 text-[13px] text-[#666] sm:flex-row sm:items-center sm:justify-between"
+      >
         <div className="space-y-1">
           <p className="break-words font-semibold text-[#222]">
             {nombrePeluqueria}

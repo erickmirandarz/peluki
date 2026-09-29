@@ -5,14 +5,24 @@ import { Contenedor } from "./Contenedor";
 interface Props {
   nombrePeluqueria: string;
   whatsapp: string | null;
+  ancho?: "contenido" | "ancho";
+  inicioHref?: string;
 }
 
-export function HeaderCliente({ nombrePeluqueria, whatsapp }: Props) {
+export function HeaderCliente({
+  nombrePeluqueria,
+  whatsapp,
+  ancho = "contenido",
+  inicioHref = "/reservar",
+}: Props) {
   return (
     <header className="border-b border-[#eeeeee] bg-white">
-      <Contenedor className="flex items-center justify-between gap-4 py-4">
+      <Contenedor
+        ancho={ancho}
+        className="flex items-center justify-between gap-4 py-4"
+      >
         <Link
-          href="/reservar"
+          href={inicioHref}
           className="break-words text-base font-semibold text-[#222] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E8542A]"
         >
           {nombrePeluqueria}
